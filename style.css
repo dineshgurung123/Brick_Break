@@ -1,0 +1,117 @@
+body{
+
+
+    background-color: black;
+}
+
+
+
+#game{
+
+position: relative;
+left: 450px;
+background-color: rgb(152, 61, 243);
+height: 700px;
+width: 700px;
+border: black solid 2px;
+
+
+}
+
+.brick-row{
+
+    display: flex;
+    justify-content: space-evenly;
+    width: 700px;
+    height: 30px;
+
+  
+}
+
+.brick{
+
+width: 30px;
+height: 20px;
+background-color: rgb(213, 90, 14);
+border-radius: 10px;
+border: white solid 2px;
+
+}
+
+
+#paddle{
+
+position: absolute;
+height: 10px;
+width: 70px;
+background-color: rgb(212, 208, 208);
+left: 350px;
+top: 90%;
+border: white solid 2px;
+border-radius: 10px;
+
+}
+
+#ball{
+position: absolute;
+height: 20px;
+width: 20px;
+background-color: rgb(218, 241, 13);
+left: 385px;
+top: 610px;
+border: black 1px solid;
+border-radius: 10px;
+
+}
+
+.button{
+    position: relative;
+    width: 150px;
+    left: 750px;
+    margin-top: 8px;
+    padding: 10px;
+
+}
+
+.start{
+
+    background-color: aqua;
+     height: 30px;
+     width: 70px;
+     border-radius: 10px;
+     border: white 2px solid;
+}
+.reset{
+
+    
+    background-color: rgb(204, 216, 31);
+     height: 30px;
+     width: 70px;
+     border-radius: 10px;
+     border: white 2px solid;
+}
+
+.start:hover{
+
+    background-color: green;
+    color: aliceblue;
+}
+.reset:hover{
+
+    background-color: green;
+    color: aliceblue;
+}
+
+#gameOver{
+
+position: relative;
+top: 100px;
+font-size: 70px;
+left: 200px;
+visibility: hidden;
+
+
+}
+
+
+
