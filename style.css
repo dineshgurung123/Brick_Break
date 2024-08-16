@@ -113,5 +113,14 @@ visibility: hidden;
 
 }
 
+#win{
 
+    position: relative;
+    top: 100px;
+    font-size: 70px;
+    left: 200px;
+    visibility: hidden;
+    
+
+}
 

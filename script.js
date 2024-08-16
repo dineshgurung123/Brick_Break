@@ -2,10 +2,11 @@ const paddle = document.getElementById('paddle');
 const ball = document.getElementById('ball');
 const bricks = document.querySelectorAll('.brick');
 const gameOver = document.getElementById('gameOver');
-
+const win = document.getElementById('win');
 
 const startButton = document.querySelector('.start');
 const resetButton = document.querySelector('.reset');
+
 
 let xSpeed= 4;
 let ySpeed = -4;
@@ -59,12 +60,20 @@ function moveBall() {
   xSpeed *= -1;
  sounds.play();
 
+ var arr = ["blue", "yellow", "pink", "white", "black" , "green", "skyblue"];
+
+        ball.style.background = arr[Math.floor(Math.random()*arr.length)];
+
  }
 
 if(ballY <=0 ){
 
     ySpeed *= -1;
     sounds.play();
+
+    var arr = ["blue", "yellow", "pink", "white", "black" , "green", "skyblue"];
+
+        ball.style.background = arr[Math.floor(Math.random()*arr.length)];
 }
 
 
@@ -72,7 +81,11 @@ if(ballY+ ball.offsetHeight >= paddle.offsetTop // ball is at same vertical line
     && ballX + ball.offsetWidth >= paddle.offsetLeft // ball hit right side
     && ballX <= paddle.offsetLeft + paddle.offsetWidth )//ball hit left side
     {
-    ySpeed *= -1;
+
+        
+        ySpeed *= -1;
+
+
     sounds.play();
     
     const paddleCentre = (paddle.offsetLeft + paddle.offsetWidth)/2;
@@ -93,16 +106,21 @@ bricks.forEach(function (brick){
     && ballX + ball.offsetWidth >= brick.offsetLeft
     && ballX <= brick.offsetLeft + brick.offsetWidth 
 
- ){
+ )
+
+ 
+ {
 
 brick.style.visibility = 'hidden';
+
+var arr = ["blue", "yellow", "pink", "white", "black" , "green", "skyblue"];
+
+ball.style.background = arr[Math.floor(Math.random())*arr.length];
 sounds.play();
 ySpeed *= -1;
 
+
  }
-
-
-
 
 
 });
@@ -110,12 +128,12 @@ ySpeed *= -1;
 
 
 //reset
-if(ballY >=700){
+if(ballY > paddle.offsetTop + paddle.offsetHeight){
 
-ballX = 385;
-ballY = 610;
-xSpeed = 4;
-ySpeed = -4;
+// ballX = 385;
+// ballY = 610;
+// xSpeed = 4;
+// ySpeed = -4;
  
 isgameOver = true;
 triggergameOver();
