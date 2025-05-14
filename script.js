@@ -1,203 +1,127 @@
 const paddle = document.getElementById('paddle');
 const ball = document.getElementById('ball');
-const bricks = document.querySelectorAll('.brick');
+const game = document.getElementById('game');
 const gameOver = document.getElementById('gameOver');
 const win = document.getElementById('win');
-
 const startButton = document.querySelector('.start');
 const resetButton = document.querySelector('.reset');
 
+let xSpeed = 3;
+let ySpeed = -3;
+let ballX = 240;
+let ballY = 420;
+let timer = null;
 
-let xSpeed= 4;
-let ySpeed = -4;
+let hitSound = new Audio('sounds/tutu.wav');
+let overSound = new Audio('sounds/over.wav');
 
-
-let ballX = 385;
-let ballY = 610;
-
-let isgameOver = false;
-let sounds;
-let over;
-sounds = new Audio('sounds/tutu.wav');
-over = new Audio('sounds/over.wav')
-
-function movePaddle(e) {
-    
-    
-    const game = document.getElementById('game');
-    if(e.key === "ArrowRight" && paddle.offsetLeft < (game.offsetWidth -  paddle.offsetWidth)){
-    
-     paddle.style.left =  paddle.offsetLeft + 10 + "px";
-
-
-  
+function createBricks() {
+  const rows = document.querySelectorAll('.brick-row');
+  rows.forEach((row, i) => {
+    for (let j = 0; j < 8; j++) {
+      const brick = document.createElement('div');
+      brick.className = 'brick';
+      if (Math.random() < 0.2) {
+        brick.style.backgroundColor = '#00f2ff'; // random surprise brick
+        brick.dataset.random = "true";
+      }
+      row.appendChild(brick);
     }
-    else if(e.key === "ArrowLeft" && paddle.offsetLeft > 0){
-
-        paddle.style.left = paddle.offsetLeft -10 + "px";
-    }
-
+  });
 }
 
-addEventListener('keydown', movePaddle);
+createBricks();
 
+document.addEventListener('keydown', function (e) {
+  if (e.key === "ArrowRight" && paddle.offsetLeft + paddle.offsetWidth < game.offsetWidth) {
+    paddle.style.left = paddle.offsetLeft + 20 + "px";
+  } else if (e.key === "ArrowLeft" && paddle.offsetLeft > 0) {
+    paddle.style.left = paddle.offsetLeft - 20 + "px";
+  }
+});
 
 function moveBall() {
-    
+  ballX += xSpeed;
+  ballY += ySpeed;
 
+  ball.style.left = ballX + "px";
+  ball.style.top = ballY + "px";
 
- ballX += xSpeed;
+  if (ballX <= 0 || ballX + ball.offsetWidth >= 500) xSpeed *= -1;
+  if (ballY <= 0) ySpeed *= -1;
 
- ball.style.left = ballX + "px";
-
-
- ballY += ySpeed;
- ball.style.top = ballY + "px";
-
-
- if(ballX <=0 ||  ballX + ball.offsetWidth >=700){
-
-  xSpeed *= -1;
- sounds.play();
-
- var arr = ["blue", "yellow", "pink", "white", "black" , "green", "skyblue"];
-
-        ball.style.background = arr[Math.floor(Math.random()*arr.length)];
-
- }
-
-if(ballY <=0 ){
-
+  // Paddle bounce
+  if (
+    ballY + ball.offsetHeight >= paddle.offsetTop &&
+    ballX + ball.offsetWidth >= paddle.offsetLeft &&
+    ballX <= paddle.offsetLeft + paddle.offsetWidth
+  ) {
     ySpeed *= -1;
-    sounds.play();
+    hitSound.play();
+  }
 
-    var arr = ["blue", "yellow", "pink", "white", "black" , "green", "skyblue"];
+  // Bricks
+  const bricks = document.querySelectorAll('.brick');
+  bricks.forEach(brick => {
+    if (brick.style.visibility !== 'hidden') {
+      const bTop = brick.offsetTop;
+      const bLeft = brick.offsetLeft;
+      const bRight = bLeft + brick.offsetWidth;
+      const bBottom = bTop + brick.offsetHeight;
 
-        ball.style.background = arr[Math.floor(Math.random()*arr.length)];
-}
-
-
-if(ballY+ ball.offsetHeight >= paddle.offsetTop // ball is at same vertical line
-    && ballX + ball.offsetWidth >= paddle.offsetLeft // ball hit right side
-    && ballX <= paddle.offsetLeft + paddle.offsetWidth )//ball hit left side
-    {
-
-        
+      if (
+        ballX + ball.offsetWidth > bLeft &&
+        ballX < bRight &&
+        ballY < bBottom &&
+        ballY + ball.offsetHeight > bTop
+      ) {
+        brick.style.visibility = 'hidden';
         ySpeed *= -1;
+        hitSound.play();
 
+        if (brick.dataset.random) {
+          xSpeed += 0.5; // Add challenge
+        }
+      }
+    }
+  });
 
-    sounds.play();
-    
-    const paddleCentre = (paddle.offsetLeft + paddle.offsetWidth)/2;
-   const ballCentre  = (ballX + ball.offsetWidth)/2;
-
-   const hitPosition = ballCentre - paddleCentre;
-
-   xSpeed = hitPosition * 0.3;
-   sounds.play();
-    
-}
-
-bricks.forEach(function (brick){
-
- if(brick.style.visibility !=='hidden'
-    && ballY <= brick.offsetTop+ brick.offsetWidth
-    && ballY + ball.offsetHeight >=brick.offsetTop
-    && ballX + ball.offsetWidth >= brick.offsetLeft
-    && ballX <= brick.offsetLeft + brick.offsetWidth 
-
- )
-
- 
- {
-
-brick.style.visibility = 'hidden';
-
-var arr = ["blue", "yellow", "pink", "white", "black" , "green", "skyblue"];
-
-ball.style.background = arr[Math.floor(Math.random())*arr.length];
-sounds.play();
-ySpeed *= -1;
-
-
- }
-
-
-});
-
-
-
-//reset
-if(ballY > paddle.offsetTop + paddle.offsetHeight){
-
-// ballX = 385;
-// ballY = 610;
-// xSpeed = 4;
-// ySpeed = -4;
- 
-isgameOver = true;
-triggergameOver();
-
-}
-
-
-
- }
- 
- function reset() {
-
+  // Win
+  const visible = [...bricks].some(b => b.style.visibility !== 'hidden');
+  if (!visible) {
     clearInterval(timer);
-    timer = null; // Reset timer reference
-    gameOver.style.visibility = 'hidden';
+    win.style.visibility = 'visible';
+  }
 
-ballX = 385;
-ballY = 610;
-xSpeed = 4;
-ySpeed = -4;
-
-ball.style.left = ballX + "px";
-ball.style.top = ballY + "px"; 
-
-paddle.style.left = "50%";
-bricks.forEach(function(brick) {
-
-    brick.style.visibility = 'visible';
-
-
-    
-});
-
-
- }
-
-var timer;
- function start() {
-    
-if(isgameOver){
-    reset();
-  
+  // Game Over
+  if (ballY > 500) {
+    clearInterval(timer);
+    gameOver.style.visibility = 'visible';
+    overSound.play();
+  }
 }
 
- timer = setInterval(moveBall, 30);
- 
- resetButton.addEventListener('click', reset);
-
- }
-
-
-function triggergameOver() {
-
-    gameOver.style.visibility = 'visible'; // Show game over message
-    clearInterval(timer); 
-    over.play();
-    timer = null; 
-    
-   
+function startGame() {
+  if (timer) return;
+  timer = setInterval(moveBall, 20);
 }
 
+function resetGame() {
+  clearInterval(timer);
+  timer = null;
+  ballX = 240;
+  ballY = 420;
+  xSpeed = 3;
+  ySpeed = -3;
+  ball.style.left = ballX + "px";
+  ball.style.top = ballY + "px";
+  paddle.style.left = "50%";
+  gameOver.style.visibility = 'hidden';
+  win.style.visibility = 'hidden';
 
+  document.querySelectorAll('.brick-row').forEach(row => (row.innerHTML = ''));
+  createBricks();
+}
 
- startButton.addEventListener('click', start);
-
-
-
+startButton.addEventListener('click', startGame);
+resetButton.addEventListener('click', resetGame);
