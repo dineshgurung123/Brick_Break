@@ -1,1 +1,1 @@
-![Game Screenshot](screenshot-2025-05-14-161508.png)
+![Screenshot](https://github.com/dineshgurung123/Brick_Break/blob/main/Screenshot%202025-05-14%20161508.png?raw=true)
